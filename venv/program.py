@@ -6,7 +6,7 @@ from matplotlib import collections  as mc
 from matplotlib.lines import Line2D
 from matplotlib.patches import Rectangle
 from matplotlib.text import Text
-from PyQt5 import QtWidgets
+from PyQt5 import QtWidgets, QtCore
 from PyQt5.QtWidgets import QPushButton
 from gui import Ui_MainWindow
 
@@ -38,6 +38,29 @@ class Mywindow(QtWidgets.QMainWindow):
 
         self.ui.actionDisplay_line_name.triggered.connect(self.display_line_names)
         self.line_labels = []  # initialisation instance variable for the line name
+
+        self.ui.mplfigs.installEventFilter(self)
+
+    def eventFilter(self, source, event):
+        """
+        Creates a context menu on each item of teh QListWidget
+        """
+        if event.type() == QtCore.QEvent.ContextMenu and source is self.ui.mplfigs:
+            menu = QtWidgets.QMenu()
+            çompleted =  menu.addAction('Completed')
+            not_run = menu.addAction('Not run')
+            re_run = menu.addAction('To be re-run')
+            action = menu.exec_(event.globalPos())
+            if action == çompleted:
+                item = source.itemAt(event.pos())
+                print(item.text())
+                print('Completed')
+            elif action == not_run:
+                print('Not run')
+            elif action == re_run:
+                print('Re-run')
+            return True
+        return super(Mywindow, self).eventFilter(source, event)
 
     def toggle_line(self, item):
         """
